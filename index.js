@@ -10,6 +10,7 @@ const doDebouncing = function (func, d) {
     return function() {
         let context = this,
         args = arguments;
+        // we keep clearing the timer for continuous clicks
         clearTimeout(timer);
 
         timer = setTimeout(()=> {
@@ -19,4 +20,20 @@ const doDebouncing = function (func, d) {
 
 }
 
-const betterImpl = doDebouncing(getData, 300);
+const doThrottling = function (func, d) {
+    let flag = true
+    return function() {
+        if (flag){
+            context = this,
+            args = arguments
+            func.apply(context,args)
+            flag = false
+        }
+        setTimeout(() => {
+            flag = true
+        }, d)
+    }
+
+}
+const betterImplUsingDebounce = doDebouncing(getData, 300);
+const betterImplUsingThrottle = doThrottling(getData, 1000);
